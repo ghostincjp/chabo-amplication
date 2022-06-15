@@ -1,0 +1,19 @@
+{
+  "dataServiceGeneratorVersion": "0.13.0",
+  "appInfo": {
+    "name": "Chabo",
+    "description": "",
+    "version": "qg7tucu0",
+    "id": "cl4fjdwvs31131501l46dlhnc0h",
+    "url": "https://server.amplication.com/cl4fjdwvs31131501l46dlhnc0h",
+    "settings": {
+      "dbHost": "localhost",
+      "dbName": "",
+      "dbPassword": "admin",
+      "dbPort": 5432,
+      "dbUser": "admin",
+      "appId": "cl4fjdwvs31131501l46dlhnc0h",
+      "authProvider": "Jwt"
+    }
+  }
+}
