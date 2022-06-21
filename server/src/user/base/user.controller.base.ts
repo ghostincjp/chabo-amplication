@@ -46,12 +46,27 @@ export class UserControllerBase {
   @swagger.ApiForbiddenResponse({ type: errors.ForbiddenException })
   async create(@common.Body() data: UserCreateInput): Promise<User> {
     return await this.service.create({
-      data: data,
+      data: {
+        ...data,
+
+        organization: data.organization
+          ? {
+              connect: data.organization,
+            }
+          : undefined,
+      },
       select: {
         createdAt: true,
         firstName: true,
         id: true,
         lastName: true,
+
+        organization: {
+          select: {
+            id: true,
+          },
+        },
+
         roles: true,
         updatedAt: true,
         username: true,
@@ -78,6 +93,13 @@ export class UserControllerBase {
         firstName: true,
         id: true,
         lastName: true,
+
+        organization: {
+          select: {
+            id: true,
+          },
+        },
+
         roles: true,
         updatedAt: true,
         username: true,
@@ -105,6 +127,13 @@ export class UserControllerBase {
         firstName: true,
         id: true,
         lastName: true,
+
+        organization: {
+          select: {
+            id: true,
+          },
+        },
+
         roles: true,
         updatedAt: true,
         username: true,
@@ -135,12 +164,27 @@ export class UserControllerBase {
     try {
       return await this.service.update({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          organization: data.organization
+            ? {
+                connect: data.organization,
+              }
+            : undefined,
+        },
         select: {
           createdAt: true,
           firstName: true,
           id: true,
           lastName: true,
+
+          organization: {
+            select: {
+              id: true,
+            },
+          },
+
           roles: true,
           updatedAt: true,
           username: true,
@@ -176,6 +220,13 @@ export class UserControllerBase {
           firstName: true,
           id: true,
           lastName: true,
+
+          organization: {
+            select: {
+              id: true,
+            },
+          },
+
           roles: true,
           updatedAt: true,
           username: true,

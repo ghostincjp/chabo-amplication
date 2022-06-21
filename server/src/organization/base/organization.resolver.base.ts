@@ -25,6 +25,8 @@ import { DeleteOrganizationArgs } from "./DeleteOrganizationArgs";
 import { OrganizationFindManyArgs } from "./OrganizationFindManyArgs";
 import { OrganizationFindUniqueArgs } from "./OrganizationFindUniqueArgs";
 import { Organization } from "./Organization";
+import { UserFindManyArgs } from "../../user/base/UserFindManyArgs";
+import { User } from "../../user/base/User";
 import { OrganizationService } from "../organization.service";
 
 @graphql.Resolver(() => Organization)
@@ -144,5 +146,25 @@ export class OrganizationResolverBase {
       }
       throw error;
     }
+  }
+
+  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @graphql.ResolveField(() => [User])
+  @nestAccessControl.UseRoles({
+    resource: "User",
+    action: "read",
+    possession: "any",
+  })
+  async users(
+    @graphql.Parent() parent: Organization,
+    @graphql.Args() args: UserFindManyArgs
+  ): Promise<User[]> {
+    const results = await this.service.findUsers(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
   }
 }
