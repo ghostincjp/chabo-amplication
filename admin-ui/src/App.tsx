@@ -13,6 +13,10 @@ import { OrganizationList } from "./organization/OrganizationList";
 import { OrganizationCreate } from "./organization/OrganizationCreate";
 import { OrganizationEdit } from "./organization/OrganizationEdit";
 import { OrganizationShow } from "./organization/OrganizationShow";
+import { ScenarioItemList } from "./scenarioItem/ScenarioItemList";
+import { ScenarioItemCreate } from "./scenarioItem/ScenarioItemCreate";
+import { ScenarioItemEdit } from "./scenarioItem/ScenarioItemEdit";
+import { ScenarioItemShow } from "./scenarioItem/ScenarioItemShow";
 import { jwtAuthProvider } from "./auth-provider/ra-auth-jwt";
 
 const App = (): React.ReactElement => {
@@ -52,6 +56,13 @@ const App = (): React.ReactElement => {
           edit={OrganizationEdit}
           create={OrganizationCreate}
           show={OrganizationShow}
+        />
+        <Resource
+          name="ScenarioItem"
+          list={ScenarioItemList}
+          edit={ScenarioItemEdit}
+          create={ScenarioItemCreate}
+          show={ScenarioItemShow}
         />
       </Admin>
     </div>

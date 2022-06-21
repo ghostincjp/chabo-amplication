@@ -19,34 +19,31 @@ import { isRecordNotFoundError } from "../../prisma.util";
 import { MetaQueryPayload } from "../../util/MetaQueryPayload";
 import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
-import { CreateOrganizationArgs } from "./CreateOrganizationArgs";
-import { UpdateOrganizationArgs } from "./UpdateOrganizationArgs";
-import { DeleteOrganizationArgs } from "./DeleteOrganizationArgs";
-import { OrganizationFindManyArgs } from "./OrganizationFindManyArgs";
-import { OrganizationFindUniqueArgs } from "./OrganizationFindUniqueArgs";
-import { Organization } from "./Organization";
-import { ScenarioItemFindManyArgs } from "../../scenarioItem/base/ScenarioItemFindManyArgs";
-import { ScenarioItem } from "../../scenarioItem/base/ScenarioItem";
-import { UserFindManyArgs } from "../../user/base/UserFindManyArgs";
-import { User } from "../../user/base/User";
-import { OrganizationService } from "../organization.service";
+import { CreateScenarioItemArgs } from "./CreateScenarioItemArgs";
+import { UpdateScenarioItemArgs } from "./UpdateScenarioItemArgs";
+import { DeleteScenarioItemArgs } from "./DeleteScenarioItemArgs";
+import { ScenarioItemFindManyArgs } from "./ScenarioItemFindManyArgs";
+import { ScenarioItemFindUniqueArgs } from "./ScenarioItemFindUniqueArgs";
+import { ScenarioItem } from "./ScenarioItem";
+import { Organization } from "../../organization/base/Organization";
+import { ScenarioItemService } from "../scenarioItem.service";
 
-@graphql.Resolver(() => Organization)
+@graphql.Resolver(() => ScenarioItem)
 @common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
-export class OrganizationResolverBase {
+export class ScenarioItemResolverBase {
   constructor(
-    protected readonly service: OrganizationService,
+    protected readonly service: ScenarioItemService,
     protected readonly rolesBuilder: nestAccessControl.RolesBuilder
   ) {}
 
   @graphql.Query(() => MetaQueryPayload)
   @nestAccessControl.UseRoles({
-    resource: "Organization",
+    resource: "ScenarioItem",
     action: "read",
     possession: "any",
   })
-  async _organizationsMeta(
-    @graphql.Args() args: OrganizationFindManyArgs
+  async _scenarioItemsMeta(
+    @graphql.Args() args: ScenarioItemFindManyArgs
   ): Promise<MetaQueryPayload> {
     const results = await this.service.count({
       ...args,
@@ -59,28 +56,28 @@ export class OrganizationResolverBase {
   }
 
   @common.UseInterceptors(AclFilterResponseInterceptor)
-  @graphql.Query(() => [Organization])
+  @graphql.Query(() => [ScenarioItem])
   @nestAccessControl.UseRoles({
-    resource: "Organization",
+    resource: "ScenarioItem",
     action: "read",
     possession: "any",
   })
-  async organizations(
-    @graphql.Args() args: OrganizationFindManyArgs
-  ): Promise<Organization[]> {
+  async scenarioItems(
+    @graphql.Args() args: ScenarioItemFindManyArgs
+  ): Promise<ScenarioItem[]> {
     return this.service.findMany(args);
   }
 
   @common.UseInterceptors(AclFilterResponseInterceptor)
-  @graphql.Query(() => Organization, { nullable: true })
+  @graphql.Query(() => ScenarioItem, { nullable: true })
   @nestAccessControl.UseRoles({
-    resource: "Organization",
+    resource: "ScenarioItem",
     action: "read",
     possession: "own",
   })
-  async organization(
-    @graphql.Args() args: OrganizationFindUniqueArgs
-  ): Promise<Organization | null> {
+  async scenarioItem(
+    @graphql.Args() args: ScenarioItemFindUniqueArgs
+  ): Promise<ScenarioItem | null> {
     const result = await this.service.findOne(args);
     if (result === null) {
       return null;
@@ -89,35 +86,47 @@ export class OrganizationResolverBase {
   }
 
   @common.UseInterceptors(AclValidateRequestInterceptor)
-  @graphql.Mutation(() => Organization)
+  @graphql.Mutation(() => ScenarioItem)
   @nestAccessControl.UseRoles({
-    resource: "Organization",
+    resource: "ScenarioItem",
     action: "create",
     possession: "any",
   })
-  async createOrganization(
-    @graphql.Args() args: CreateOrganizationArgs
-  ): Promise<Organization> {
+  async createScenarioItem(
+    @graphql.Args() args: CreateScenarioItemArgs
+  ): Promise<ScenarioItem> {
     return await this.service.create({
       ...args,
-      data: args.data,
+      data: {
+        ...args.data,
+
+        organization: {
+          connect: args.data.organization,
+        },
+      },
     });
   }
 
   @common.UseInterceptors(AclValidateRequestInterceptor)
-  @graphql.Mutation(() => Organization)
+  @graphql.Mutation(() => ScenarioItem)
   @nestAccessControl.UseRoles({
-    resource: "Organization",
+    resource: "ScenarioItem",
     action: "update",
     possession: "any",
   })
-  async updateOrganization(
-    @graphql.Args() args: UpdateOrganizationArgs
-  ): Promise<Organization | null> {
+  async updateScenarioItem(
+    @graphql.Args() args: UpdateScenarioItemArgs
+  ): Promise<ScenarioItem | null> {
     try {
       return await this.service.update({
         ...args,
-        data: args.data,
+        data: {
+          ...args.data,
+
+          organization: {
+            connect: args.data.organization,
+          },
+        },
       });
     } catch (error) {
       if (isRecordNotFoundError(error)) {
@@ -129,15 +138,15 @@ export class OrganizationResolverBase {
     }
   }
 
-  @graphql.Mutation(() => Organization)
+  @graphql.Mutation(() => ScenarioItem)
   @nestAccessControl.UseRoles({
-    resource: "Organization",
+    resource: "ScenarioItem",
     action: "delete",
     possession: "any",
   })
-  async deleteOrganization(
-    @graphql.Args() args: DeleteOrganizationArgs
-  ): Promise<Organization | null> {
+  async deleteScenarioItem(
+    @graphql.Args() args: DeleteScenarioItemArgs
+  ): Promise<ScenarioItem | null> {
     try {
       return await this.service.delete(args);
     } catch (error) {
@@ -151,42 +160,20 @@ export class OrganizationResolverBase {
   }
 
   @common.UseInterceptors(AclFilterResponseInterceptor)
-  @graphql.ResolveField(() => [ScenarioItem])
+  @graphql.ResolveField(() => Organization, { nullable: true })
   @nestAccessControl.UseRoles({
-    resource: "ScenarioItem",
+    resource: "Organization",
     action: "read",
     possession: "any",
   })
-  async scenarioItems(
-    @graphql.Parent() parent: Organization,
-    @graphql.Args() args: ScenarioItemFindManyArgs
-  ): Promise<ScenarioItem[]> {
-    const results = await this.service.findScenarioItems(parent.id, args);
+  async organization(
+    @graphql.Parent() parent: ScenarioItem
+  ): Promise<Organization | null> {
+    const result = await this.service.getOrganization(parent.id);
 
-    if (!results) {
-      return [];
+    if (!result) {
+      return null;
     }
-
-    return results;
-  }
-
-  @common.UseInterceptors(AclFilterResponseInterceptor)
-  @graphql.ResolveField(() => [User])
-  @nestAccessControl.UseRoles({
-    resource: "User",
-    action: "read",
-    possession: "any",
-  })
-  async users(
-    @graphql.Parent() parent: Organization,
-    @graphql.Args() args: UserFindManyArgs
-  ): Promise<User[]> {
-    const results = await this.service.findUsers(parent.id, args);
-
-    if (!results) {
-      return [];
-    }
-
-    return results;
+    return result;
   }
 }

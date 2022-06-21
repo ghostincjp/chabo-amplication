@@ -22,6 +22,24 @@ export const OrganizationShow = (props: ShowProps): React.ReactElement => {
         <TextField label="name" source="name" />
         <DateField source="updatedAt" label="Updated At" />
         <ReferenceManyField
+          reference="ScenarioItem"
+          target="OrganizationId"
+          label="ScenarioItems"
+        >
+          <Datagrid rowClick="show">
+            <DateField source="createdAt" label="Created At" />
+            <TextField label="ID" source="id" />
+            <ReferenceField
+              label="organization"
+              source="organization.id"
+              reference="Organization"
+            >
+              <TextField source={ORGANIZATION_TITLE_FIELD} />
+            </ReferenceField>
+            <DateField source="updatedAt" label="Updated At" />
+          </Datagrid>
+        </ReferenceManyField>
+        <ReferenceManyField
           reference="User"
           target="OrganizationId"
           label="Users"
