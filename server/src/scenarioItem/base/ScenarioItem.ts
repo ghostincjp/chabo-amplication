@@ -11,12 +11,11 @@ https://docs.amplication.com/docs/how-to/custom-code
   */
 import { ObjectType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsString, ValidateNested, IsOptional } from "class-validator";
+import { IsDate, IsString, ValidateNested } from "class-validator";
 import { Type } from "class-transformer";
-import { ScenarioItem } from "../../scenarioItem/base/ScenarioItem";
-import { User } from "../../user/base/User";
+import { Organization } from "../../organization/base/Organization";
 @ObjectType()
-class Organization {
+class ScenarioItem {
   @ApiProperty({
     required: true,
   })
@@ -35,20 +34,11 @@ class Organization {
 
   @ApiProperty({
     required: true,
-    type: String,
-  })
-  @IsString()
-  @Field(() => String)
-  name!: string;
-
-  @ApiProperty({
-    required: false,
-    type: () => [ScenarioItem],
+    type: () => Organization,
   })
   @ValidateNested()
-  @Type(() => ScenarioItem)
-  @IsOptional()
-  scenarioItems?: Array<ScenarioItem>;
+  @Type(() => Organization)
+  organization?: Organization;
 
   @ApiProperty({
     required: true,
@@ -57,14 +47,5 @@ class Organization {
   @Type(() => Date)
   @Field(() => Date)
   updatedAt!: Date;
-
-  @ApiProperty({
-    required: false,
-    type: () => [User],
-  })
-  @ValidateNested()
-  @Type(() => User)
-  @IsOptional()
-  users?: Array<User>;
 }
-export { Organization };
+export { ScenarioItem };

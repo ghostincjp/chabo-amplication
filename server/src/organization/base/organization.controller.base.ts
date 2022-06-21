@@ -27,6 +27,9 @@ import { OrganizationWhereUniqueInput } from "./OrganizationWhereUniqueInput";
 import { OrganizationFindManyArgs } from "./OrganizationFindManyArgs";
 import { OrganizationUpdateInput } from "./OrganizationUpdateInput";
 import { Organization } from "./Organization";
+import { ScenarioItemFindManyArgs } from "../../scenarioItem/base/ScenarioItemFindManyArgs";
+import { ScenarioItem } from "../../scenarioItem/base/ScenarioItem";
+import { ScenarioItemWhereUniqueInput } from "../../scenarioItem/base/ScenarioItemWhereUniqueInput";
 import { UserFindManyArgs } from "../../user/base/UserFindManyArgs";
 import { User } from "../../user/base/User";
 import { UserWhereUniqueInput } from "../../user/base/UserWhereUniqueInput";
@@ -179,6 +182,108 @@ export class OrganizationControllerBase {
       }
       throw error;
     }
+  }
+
+  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @nestAccessControl.UseRoles({
+    resource: "ScenarioItem",
+    action: "read",
+    possession: "any",
+  })
+  @common.Get("/:id/scenarioItems")
+  @ApiNestedQuery(ScenarioItemFindManyArgs)
+  async findManyScenarioItems(
+    @common.Req() request: Request,
+    @common.Param() params: OrganizationWhereUniqueInput
+  ): Promise<ScenarioItem[]> {
+    const query = plainToClass(ScenarioItemFindManyArgs, request.query);
+    const results = await this.service.findScenarioItems(params.id, {
+      ...query,
+      select: {
+        createdAt: true,
+        id: true,
+
+        organization: {
+          select: {
+            id: true,
+          },
+        },
+
+        updatedAt: true,
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @nestAccessControl.UseRoles({
+    resource: "Organization",
+    action: "update",
+    possession: "any",
+  })
+  @common.Post("/:id/scenarioItems")
+  async connectScenarioItems(
+    @common.Param() params: OrganizationWhereUniqueInput,
+    @common.Body() body: ScenarioItemWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      scenarioItems: {
+        connect: body,
+      },
+    };
+    await this.service.update({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @nestAccessControl.UseRoles({
+    resource: "Organization",
+    action: "update",
+    possession: "any",
+  })
+  @common.Patch("/:id/scenarioItems")
+  async updateScenarioItems(
+    @common.Param() params: OrganizationWhereUniqueInput,
+    @common.Body() body: ScenarioItemWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      scenarioItems: {
+        set: body,
+      },
+    };
+    await this.service.update({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @nestAccessControl.UseRoles({
+    resource: "Organization",
+    action: "update",
+    possession: "any",
+  })
+  @common.Delete("/:id/scenarioItems")
+  async disconnectScenarioItems(
+    @common.Param() params: OrganizationWhereUniqueInput,
+    @common.Body() body: ScenarioItemWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      scenarioItems: {
+        disconnect: body,
+      },
+    };
+    await this.service.update({
+      where: params,
+      data,
+      select: { id: true },
+    });
   }
 
   @common.UseInterceptors(AclFilterResponseInterceptor)
