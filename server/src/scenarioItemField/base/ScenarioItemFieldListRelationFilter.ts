@@ -11,34 +11,46 @@ https://docs.amplication.com/docs/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { OrganizationWhereUniqueInput } from "../../organization/base/OrganizationWhereUniqueInput";
+import { ScenarioItemFieldWhereInput } from "./ScenarioItemFieldWhereInput";
 import { ValidateNested, IsOptional } from "class-validator";
 import { Type } from "class-transformer";
-import { ScenarioItemFieldUpdateManyWithoutScenarioItemsInput } from "./ScenarioItemFieldUpdateManyWithoutScenarioItemsInput";
+
 @InputType()
-class ScenarioItemUpdateInput {
+class ScenarioItemFieldListRelationFilter {
   @ApiProperty({
     required: false,
-    type: () => OrganizationWhereUniqueInput,
+    type: () => ScenarioItemFieldWhereInput,
   })
   @ValidateNested()
-  @Type(() => OrganizationWhereUniqueInput)
+  @Type(() => ScenarioItemFieldWhereInput)
   @IsOptional()
-  @Field(() => OrganizationWhereUniqueInput, {
+  @Field(() => ScenarioItemFieldWhereInput, {
     nullable: true,
   })
-  organization?: OrganizationWhereUniqueInput;
+  every?: ScenarioItemFieldWhereInput;
 
   @ApiProperty({
     required: false,
-    type: () => ScenarioItemFieldUpdateManyWithoutScenarioItemsInput,
+    type: () => ScenarioItemFieldWhereInput,
   })
   @ValidateNested()
-  @Type(() => ScenarioItemFieldUpdateManyWithoutScenarioItemsInput)
+  @Type(() => ScenarioItemFieldWhereInput)
   @IsOptional()
-  @Field(() => ScenarioItemFieldUpdateManyWithoutScenarioItemsInput, {
+  @Field(() => ScenarioItemFieldWhereInput, {
     nullable: true,
   })
-  scenarioItemFields?: ScenarioItemFieldUpdateManyWithoutScenarioItemsInput;
+  some?: ScenarioItemFieldWhereInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => ScenarioItemFieldWhereInput,
+  })
+  @ValidateNested()
+  @Type(() => ScenarioItemFieldWhereInput)
+  @IsOptional()
+  @Field(() => ScenarioItemFieldWhereInput, {
+    nullable: true,
+  })
+  none?: ScenarioItemFieldWhereInput;
 }
-export { ScenarioItemUpdateInput };
+export { ScenarioItemFieldListRelationFilter };

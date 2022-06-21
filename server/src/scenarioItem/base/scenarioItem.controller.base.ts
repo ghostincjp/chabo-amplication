@@ -27,6 +27,9 @@ import { ScenarioItemWhereUniqueInput } from "./ScenarioItemWhereUniqueInput";
 import { ScenarioItemFindManyArgs } from "./ScenarioItemFindManyArgs";
 import { ScenarioItemUpdateInput } from "./ScenarioItemUpdateInput";
 import { ScenarioItem } from "./ScenarioItem";
+import { ScenarioItemFieldFindManyArgs } from "../../scenarioItemField/base/ScenarioItemFieldFindManyArgs";
+import { ScenarioItemField } from "../../scenarioItemField/base/ScenarioItemField";
+import { ScenarioItemFieldWhereUniqueInput } from "../../scenarioItemField/base/ScenarioItemFieldWhereUniqueInput";
 @swagger.ApiBearerAuth()
 @common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
 export class ScenarioItemControllerBase {
@@ -218,5 +221,107 @@ export class ScenarioItemControllerBase {
       }
       throw error;
     }
+  }
+
+  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @nestAccessControl.UseRoles({
+    resource: "ScenarioItemField",
+    action: "read",
+    possession: "any",
+  })
+  @common.Get("/:id/scenarioItemFields")
+  @ApiNestedQuery(ScenarioItemFieldFindManyArgs)
+  async findManyScenarioItemFields(
+    @common.Req() request: Request,
+    @common.Param() params: ScenarioItemWhereUniqueInput
+  ): Promise<ScenarioItemField[]> {
+    const query = plainToClass(ScenarioItemFieldFindManyArgs, request.query);
+    const results = await this.service.findScenarioItemFields(params.id, {
+      ...query,
+      select: {
+        createdAt: true,
+        id: true,
+
+        schenarioItem: {
+          select: {
+            id: true,
+          },
+        },
+
+        updatedAt: true,
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @nestAccessControl.UseRoles({
+    resource: "ScenarioItem",
+    action: "update",
+    possession: "any",
+  })
+  @common.Post("/:id/scenarioItemFields")
+  async connectScenarioItemFields(
+    @common.Param() params: ScenarioItemWhereUniqueInput,
+    @common.Body() body: ScenarioItemFieldWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      scenarioItemFields: {
+        connect: body,
+      },
+    };
+    await this.service.update({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @nestAccessControl.UseRoles({
+    resource: "ScenarioItem",
+    action: "update",
+    possession: "any",
+  })
+  @common.Patch("/:id/scenarioItemFields")
+  async updateScenarioItemFields(
+    @common.Param() params: ScenarioItemWhereUniqueInput,
+    @common.Body() body: ScenarioItemFieldWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      scenarioItemFields: {
+        set: body,
+      },
+    };
+    await this.service.update({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @nestAccessControl.UseRoles({
+    resource: "ScenarioItem",
+    action: "update",
+    possession: "any",
+  })
+  @common.Delete("/:id/scenarioItemFields")
+  async disconnectScenarioItemFields(
+    @common.Param() params: ScenarioItemWhereUniqueInput,
+    @common.Body() body: ScenarioItemFieldWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      scenarioItemFields: {
+        disconnect: body,
+      },
+    };
+    await this.service.update({
+      where: params,
+      data,
+      select: { id: true },
+    });
   }
 }

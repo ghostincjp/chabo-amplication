@@ -10,7 +10,12 @@ https://docs.amplication.com/docs/how-to/custom-code
 ------------------------------------------------------------------------------
   */
 import { PrismaService } from "nestjs-prisma";
-import { Prisma, ScenarioItem, Organization } from "@prisma/client";
+import {
+  Prisma,
+  ScenarioItem,
+  ScenarioItemField,
+  Organization,
+} from "@prisma/client";
 
 export class ScenarioItemServiceBase {
   constructor(protected readonly prisma: PrismaService) {}
@@ -45,6 +50,17 @@ export class ScenarioItemServiceBase {
     args: Prisma.SelectSubset<T, Prisma.ScenarioItemDeleteArgs>
   ): Promise<ScenarioItem> {
     return this.prisma.scenarioItem.delete(args);
+  }
+
+  async findScenarioItemFields(
+    parentId: string,
+    args: Prisma.ScenarioItemFieldFindManyArgs
+  ): Promise<ScenarioItemField[]> {
+    return this.prisma.scenarioItem
+      .findUnique({
+        where: { id: parentId },
+      })
+      .scenarioItemFields(args);
   }
 
   async getOrganization(parentId: string): Promise<Organization | null> {
