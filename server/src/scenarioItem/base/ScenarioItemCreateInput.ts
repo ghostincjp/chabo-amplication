@@ -12,8 +12,9 @@ https://docs.amplication.com/docs/how-to/custom-code
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
 import { OrganizationWhereUniqueInput } from "../../organization/base/OrganizationWhereUniqueInput";
-import { ValidateNested } from "class-validator";
+import { ValidateNested, IsOptional } from "class-validator";
 import { Type } from "class-transformer";
+import { ScenarioItemFieldCreateNestedManyWithoutScenarioItemsInput } from "./ScenarioItemFieldCreateNestedManyWithoutScenarioItemsInput";
 @InputType()
 class ScenarioItemCreateInput {
   @ApiProperty({
@@ -24,5 +25,17 @@ class ScenarioItemCreateInput {
   @Type(() => OrganizationWhereUniqueInput)
   @Field(() => OrganizationWhereUniqueInput)
   organization!: OrganizationWhereUniqueInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => ScenarioItemFieldCreateNestedManyWithoutScenarioItemsInput,
+  })
+  @ValidateNested()
+  @Type(() => ScenarioItemFieldCreateNestedManyWithoutScenarioItemsInput)
+  @IsOptional()
+  @Field(() => ScenarioItemFieldCreateNestedManyWithoutScenarioItemsInput, {
+    nullable: true,
+  })
+  scenarioItemFields?: ScenarioItemFieldCreateNestedManyWithoutScenarioItemsInput;
 }
 export { ScenarioItemCreateInput };

@@ -19,33 +19,31 @@ import { isRecordNotFoundError } from "../../prisma.util";
 import { MetaQueryPayload } from "../../util/MetaQueryPayload";
 import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
-import { CreateScenarioItemArgs } from "./CreateScenarioItemArgs";
-import { UpdateScenarioItemArgs } from "./UpdateScenarioItemArgs";
-import { DeleteScenarioItemArgs } from "./DeleteScenarioItemArgs";
-import { ScenarioItemFindManyArgs } from "./ScenarioItemFindManyArgs";
-import { ScenarioItemFindUniqueArgs } from "./ScenarioItemFindUniqueArgs";
-import { ScenarioItem } from "./ScenarioItem";
-import { ScenarioItemFieldFindManyArgs } from "../../scenarioItemField/base/ScenarioItemFieldFindManyArgs";
-import { ScenarioItemField } from "../../scenarioItemField/base/ScenarioItemField";
-import { Organization } from "../../organization/base/Organization";
-import { ScenarioItemService } from "../scenarioItem.service";
+import { CreateScenarioItemFieldArgs } from "./CreateScenarioItemFieldArgs";
+import { UpdateScenarioItemFieldArgs } from "./UpdateScenarioItemFieldArgs";
+import { DeleteScenarioItemFieldArgs } from "./DeleteScenarioItemFieldArgs";
+import { ScenarioItemFieldFindManyArgs } from "./ScenarioItemFieldFindManyArgs";
+import { ScenarioItemFieldFindUniqueArgs } from "./ScenarioItemFieldFindUniqueArgs";
+import { ScenarioItemField } from "./ScenarioItemField";
+import { ScenarioItem } from "../../scenarioItem/base/ScenarioItem";
+import { ScenarioItemFieldService } from "../scenarioItemField.service";
 
-@graphql.Resolver(() => ScenarioItem)
+@graphql.Resolver(() => ScenarioItemField)
 @common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
-export class ScenarioItemResolverBase {
+export class ScenarioItemFieldResolverBase {
   constructor(
-    protected readonly service: ScenarioItemService,
+    protected readonly service: ScenarioItemFieldService,
     protected readonly rolesBuilder: nestAccessControl.RolesBuilder
   ) {}
 
   @graphql.Query(() => MetaQueryPayload)
   @nestAccessControl.UseRoles({
-    resource: "ScenarioItem",
+    resource: "ScenarioItemField",
     action: "read",
     possession: "any",
   })
-  async _scenarioItemsMeta(
-    @graphql.Args() args: ScenarioItemFindManyArgs
+  async _scenarioItemFieldsMeta(
+    @graphql.Args() args: ScenarioItemFieldFindManyArgs
   ): Promise<MetaQueryPayload> {
     const results = await this.service.count({
       ...args,
@@ -58,28 +56,28 @@ export class ScenarioItemResolverBase {
   }
 
   @common.UseInterceptors(AclFilterResponseInterceptor)
-  @graphql.Query(() => [ScenarioItem])
+  @graphql.Query(() => [ScenarioItemField])
   @nestAccessControl.UseRoles({
-    resource: "ScenarioItem",
+    resource: "ScenarioItemField",
     action: "read",
     possession: "any",
   })
-  async scenarioItems(
-    @graphql.Args() args: ScenarioItemFindManyArgs
-  ): Promise<ScenarioItem[]> {
+  async scenarioItemFields(
+    @graphql.Args() args: ScenarioItemFieldFindManyArgs
+  ): Promise<ScenarioItemField[]> {
     return this.service.findMany(args);
   }
 
   @common.UseInterceptors(AclFilterResponseInterceptor)
-  @graphql.Query(() => ScenarioItem, { nullable: true })
+  @graphql.Query(() => ScenarioItemField, { nullable: true })
   @nestAccessControl.UseRoles({
-    resource: "ScenarioItem",
+    resource: "ScenarioItemField",
     action: "read",
     possession: "own",
   })
-  async scenarioItem(
-    @graphql.Args() args: ScenarioItemFindUniqueArgs
-  ): Promise<ScenarioItem | null> {
+  async scenarioItemField(
+    @graphql.Args() args: ScenarioItemFieldFindUniqueArgs
+  ): Promise<ScenarioItemField | null> {
     const result = await this.service.findOne(args);
     if (result === null) {
       return null;
@@ -88,45 +86,45 @@ export class ScenarioItemResolverBase {
   }
 
   @common.UseInterceptors(AclValidateRequestInterceptor)
-  @graphql.Mutation(() => ScenarioItem)
+  @graphql.Mutation(() => ScenarioItemField)
   @nestAccessControl.UseRoles({
-    resource: "ScenarioItem",
+    resource: "ScenarioItemField",
     action: "create",
     possession: "any",
   })
-  async createScenarioItem(
-    @graphql.Args() args: CreateScenarioItemArgs
-  ): Promise<ScenarioItem> {
+  async createScenarioItemField(
+    @graphql.Args() args: CreateScenarioItemFieldArgs
+  ): Promise<ScenarioItemField> {
     return await this.service.create({
       ...args,
       data: {
         ...args.data,
 
-        organization: {
-          connect: args.data.organization,
+        schenarioItem: {
+          connect: args.data.schenarioItem,
         },
       },
     });
   }
 
   @common.UseInterceptors(AclValidateRequestInterceptor)
-  @graphql.Mutation(() => ScenarioItem)
+  @graphql.Mutation(() => ScenarioItemField)
   @nestAccessControl.UseRoles({
-    resource: "ScenarioItem",
+    resource: "ScenarioItemField",
     action: "update",
     possession: "any",
   })
-  async updateScenarioItem(
-    @graphql.Args() args: UpdateScenarioItemArgs
-  ): Promise<ScenarioItem | null> {
+  async updateScenarioItemField(
+    @graphql.Args() args: UpdateScenarioItemFieldArgs
+  ): Promise<ScenarioItemField | null> {
     try {
       return await this.service.update({
         ...args,
         data: {
           ...args.data,
 
-          organization: {
-            connect: args.data.organization,
+          schenarioItem: {
+            connect: args.data.schenarioItem,
           },
         },
       });
@@ -140,15 +138,15 @@ export class ScenarioItemResolverBase {
     }
   }
 
-  @graphql.Mutation(() => ScenarioItem)
+  @graphql.Mutation(() => ScenarioItemField)
   @nestAccessControl.UseRoles({
-    resource: "ScenarioItem",
+    resource: "ScenarioItemField",
     action: "delete",
     possession: "any",
   })
-  async deleteScenarioItem(
-    @graphql.Args() args: DeleteScenarioItemArgs
-  ): Promise<ScenarioItem | null> {
+  async deleteScenarioItemField(
+    @graphql.Args() args: DeleteScenarioItemFieldArgs
+  ): Promise<ScenarioItemField | null> {
     try {
       return await this.service.delete(args);
     } catch (error) {
@@ -162,36 +160,16 @@ export class ScenarioItemResolverBase {
   }
 
   @common.UseInterceptors(AclFilterResponseInterceptor)
-  @graphql.ResolveField(() => [ScenarioItemField])
+  @graphql.ResolveField(() => ScenarioItem, { nullable: true })
   @nestAccessControl.UseRoles({
-    resource: "ScenarioItemField",
+    resource: "ScenarioItem",
     action: "read",
     possession: "any",
   })
-  async scenarioItemFields(
-    @graphql.Parent() parent: ScenarioItem,
-    @graphql.Args() args: ScenarioItemFieldFindManyArgs
-  ): Promise<ScenarioItemField[]> {
-    const results = await this.service.findScenarioItemFields(parent.id, args);
-
-    if (!results) {
-      return [];
-    }
-
-    return results;
-  }
-
-  @common.UseInterceptors(AclFilterResponseInterceptor)
-  @graphql.ResolveField(() => Organization, { nullable: true })
-  @nestAccessControl.UseRoles({
-    resource: "Organization",
-    action: "read",
-    possession: "any",
-  })
-  async organization(
-    @graphql.Parent() parent: ScenarioItem
-  ): Promise<Organization | null> {
-    const result = await this.service.getOrganization(parent.id);
+  async schenarioItem(
+    @graphql.Parent() parent: ScenarioItemField
+  ): Promise<ScenarioItem | null> {
+    const result = await this.service.getSchenarioItem(parent.id);
 
     if (!result) {
       return null;
