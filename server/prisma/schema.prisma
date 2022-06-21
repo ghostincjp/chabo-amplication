@@ -8,14 +8,16 @@ generator client {
 }
 
 model User {
-  createdAt DateTime @default(now())
-  firstName String?
-  id        String   @id @default(cuid())
-  lastName  String?
-  password  String
-  roles     String[]
-  updatedAt DateTime @updatedAt
-  username  String   @unique
+  createdAt      DateTime      @default(now())
+  firstName      String?
+  id             String        @id @default(cuid())
+  lastName       String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String?
+  password       String
+  roles          String[]
+  updatedAt      DateTime      @updatedAt
+  username       String        @unique
 }
 
 model Organization {
@@ -23,4 +25,5 @@ model Organization {
   id        String   @id @default(cuid())
   name      String
   updatedAt DateTime @updatedAt
+  users     User[]
 }

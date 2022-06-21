@@ -27,6 +27,9 @@ import { OrganizationWhereUniqueInput } from "./OrganizationWhereUniqueInput";
 import { OrganizationFindManyArgs } from "./OrganizationFindManyArgs";
 import { OrganizationUpdateInput } from "./OrganizationUpdateInput";
 import { Organization } from "./Organization";
+import { UserFindManyArgs } from "../../user/base/UserFindManyArgs";
+import { User } from "../../user/base/User";
+import { UserWhereUniqueInput } from "../../user/base/UserWhereUniqueInput";
 @swagger.ApiBearerAuth()
 @common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
 export class OrganizationControllerBase {
@@ -176,5 +179,111 @@ export class OrganizationControllerBase {
       }
       throw error;
     }
+  }
+
+  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @nestAccessControl.UseRoles({
+    resource: "User",
+    action: "read",
+    possession: "any",
+  })
+  @common.Get("/:id/users")
+  @ApiNestedQuery(UserFindManyArgs)
+  async findManyUsers(
+    @common.Req() request: Request,
+    @common.Param() params: OrganizationWhereUniqueInput
+  ): Promise<User[]> {
+    const query = plainToClass(UserFindManyArgs, request.query);
+    const results = await this.service.findUsers(params.id, {
+      ...query,
+      select: {
+        createdAt: true,
+        firstName: true,
+        id: true,
+        lastName: true,
+
+        organization: {
+          select: {
+            id: true,
+          },
+        },
+
+        roles: true,
+        updatedAt: true,
+        username: true,
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @nestAccessControl.UseRoles({
+    resource: "Organization",
+    action: "update",
+    possession: "any",
+  })
+  @common.Post("/:id/users")
+  async connectUsers(
+    @common.Param() params: OrganizationWhereUniqueInput,
+    @common.Body() body: UserWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      users: {
+        connect: body,
+      },
+    };
+    await this.service.update({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @nestAccessControl.UseRoles({
+    resource: "Organization",
+    action: "update",
+    possession: "any",
+  })
+  @common.Patch("/:id/users")
+  async updateUsers(
+    @common.Param() params: OrganizationWhereUniqueInput,
+    @common.Body() body: UserWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      users: {
+        set: body,
+      },
+    };
+    await this.service.update({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @nestAccessControl.UseRoles({
+    resource: "Organization",
+    action: "update",
+    possession: "any",
+  })
+  @common.Delete("/:id/users")
+  async disconnectUsers(
+    @common.Param() params: OrganizationWhereUniqueInput,
+    @common.Body() body: UserWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      users: {
+        disconnect: body,
+      },
+    };
+    await this.service.update({
+      where: params,
+      data,
+      select: { id: true },
+    });
   }
 }

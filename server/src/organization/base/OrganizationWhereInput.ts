@@ -13,7 +13,8 @@ import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
 import { StringFilter } from "../../util/StringFilter";
 import { Type } from "class-transformer";
-import { IsOptional } from "class-validator";
+import { IsOptional, ValidateNested } from "class-validator";
+import { UserListRelationFilter } from "../../user/base/UserListRelationFilter";
 @InputType()
 class OrganizationWhereInput {
   @ApiProperty({
@@ -37,5 +38,17 @@ class OrganizationWhereInput {
     nullable: true,
   })
   name?: StringFilter;
+
+  @ApiProperty({
+    required: false,
+    type: () => UserListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => UserListRelationFilter)
+  @IsOptional()
+  @Field(() => UserListRelationFilter, {
+    nullable: true,
+  })
+  users?: UserListRelationFilter;
 }
 export { OrganizationWhereInput };
