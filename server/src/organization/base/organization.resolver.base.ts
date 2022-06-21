@@ -25,6 +25,8 @@ import { DeleteOrganizationArgs } from "./DeleteOrganizationArgs";
 import { OrganizationFindManyArgs } from "./OrganizationFindManyArgs";
 import { OrganizationFindUniqueArgs } from "./OrganizationFindUniqueArgs";
 import { Organization } from "./Organization";
+import { ScenarioItemFindManyArgs } from "../../scenarioItem/base/ScenarioItemFindManyArgs";
+import { ScenarioItem } from "../../scenarioItem/base/ScenarioItem";
 import { UserFindManyArgs } from "../../user/base/UserFindManyArgs";
 import { User } from "../../user/base/User";
 import { OrganizationService } from "../organization.service";
@@ -146,6 +148,26 @@ export class OrganizationResolverBase {
       }
       throw error;
     }
+  }
+
+  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @graphql.ResolveField(() => [ScenarioItem])
+  @nestAccessControl.UseRoles({
+    resource: "ScenarioItem",
+    action: "read",
+    possession: "any",
+  })
+  async scenarioItems(
+    @graphql.Parent() parent: Organization,
+    @graphql.Args() args: ScenarioItemFindManyArgs
+  ): Promise<ScenarioItem[]> {
+    const results = await this.service.findScenarioItems(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
   }
 
   @common.UseInterceptors(AclFilterResponseInterceptor)

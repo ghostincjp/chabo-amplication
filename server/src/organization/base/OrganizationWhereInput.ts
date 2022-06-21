@@ -14,6 +14,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { StringFilter } from "../../util/StringFilter";
 import { Type } from "class-transformer";
 import { IsOptional, ValidateNested } from "class-validator";
+import { ScenarioItemListRelationFilter } from "../../scenarioItem/base/ScenarioItemListRelationFilter";
 import { UserListRelationFilter } from "../../user/base/UserListRelationFilter";
 @InputType()
 class OrganizationWhereInput {
@@ -38,6 +39,18 @@ class OrganizationWhereInput {
     nullable: true,
   })
   name?: StringFilter;
+
+  @ApiProperty({
+    required: false,
+    type: () => ScenarioItemListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => ScenarioItemListRelationFilter)
+  @IsOptional()
+  @Field(() => ScenarioItemListRelationFilter, {
+    nullable: true,
+  })
+  scenarioItems?: ScenarioItemListRelationFilter;
 
   @ApiProperty({
     required: false,

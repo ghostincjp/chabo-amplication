@@ -21,9 +21,27 @@ model User {
 }
 
 model Organization {
-  createdAt DateTime @default(now())
-  id        String   @id @default(cuid())
-  name      String
-  updatedAt DateTime @updatedAt
-  users     User[]
+  createdAt     DateTime       @default(now())
+  id            String         @id @default(cuid())
+  name          String
+  scenarioItems ScenarioItem[]
+  updatedAt     DateTime       @updatedAt
+  users         User[]
+}
+
+model ScenarioItem {
+  createdAt          DateTime            @default(now())
+  id                 String              @id @default(cuid())
+  organization       Organization        @relation(fields: [organizationId], references: [id])
+  organizationId     String
+  scenarioItemFields ScenarioItemField[]
+  updatedAt          DateTime            @updatedAt
+}
+
+model ScenarioItemField {
+  createdAt       DateTime     @default(now())
+  id              String       @id @default(cuid())
+  schenarioItem   ScenarioItem @relation(fields: [schenarioItemId], references: [id])
+  schenarioItemId String
+  updatedAt       DateTime     @updatedAt
 }
